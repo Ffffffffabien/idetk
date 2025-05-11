@@ -1,5 +1,5 @@
 proc Form_About {} {
-toplevel .fabout
+toplevel .fabout ; #eesai de modif
 wm title .fabout "About IdeTK"
 wm geometry .fabout 500x400+200+200
 wm resizable .fabout 0 0

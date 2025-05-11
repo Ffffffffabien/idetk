@@ -1,0 +1,157 @@
+proc addwidget {} {
+	# Widget options have different forms to select option.
+	#fc= Form to choose color fa=Form to choose anchor, fi= Form to choose image, fs= for to put size
+	# Button
+set w1 [list "activebackground" "activeforeground" "anchor" "background" "bd" "bg" "bitmap" "borderwidth" "command" "compound" "cursor" "default" "disabledforeground" "fg" "font" "foreground" "height" "highlightbackground" "highlightcolor" "highlightthickness" "image" "justify" "length" "overrelief" "padx" "pady" "relief" "repeatdelay" "repeatinterval" "state" "takefocus" "text" "textvariable" "underline" "width" "wrap"]
+set w1w [list "fc" "fc" "fa" "fc" "fc" "fi"]
+	set otoplevel [list "-bd" "-borderwidth" "-class" "-menu" "-relief" "-screen" "-use" "-background" "-bg" "-colormap" "-container" "-cursor" "-height" "-highlightbackground" "-highlightcolor" "-highlightthickness" "-padx" "-pady" "-takefocus" "-visual" "-width"]
+	set ocanvas [list "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set ocheck [list "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set oentry [list "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set oframe [list "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set olbframe [list "bd" "borderwidth" "class" "fg" "font" "foreground" "labelanchor" "labelwidget" "relief" "text" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set opw [list "background" "bd" "bg" "borderwidth" "cursor" "handlepad" "handlesize" "height" "opaqueresize" "orient" "proxybackground" "proxyborderwidth" "proxyrelief" "relief" "sashcursor" "sashpad" "sashrelief" "sashwidth" "showhandle" "width"]
+	set oscale [list "activebackground" "background" "bigincrement" "bd" "bg" "borderwidth" "command" "cursor" "digits" "fg" "font" "foreground" "from" "highlightbackground" "highlightcolor" "highlightthickness" "label" "length" "orient" "relief" "repeatdelay" "repeatinterval" "resolution" "showvalue" "sliderlength" "sliderrelief" "state" "takefocus" "tickinterval" "to" "troughcolor" "variable" "width"]
+	set oscrb [list "activebackground" "activerelief" "background" "bd" "bg" "borderwidth" "command" "cursor" "elementborderwidth" "highlightbackground" "highlightcolor" "highlightthickness" "jump" "orient" "relief" "repeatdelay" "repeatinterval" "takefocus" "troughcolor" "width"]
+	
+	
+	global codewidget
+	global namewidget
+	
+	# witch widget selected
+	global ww
+	
+	toplevel .adw
+	wm title .adw "New widget"
+	wm geometry .adw 500x500
+	# Menu 
+	pack [frame .adw.lf5] -fill x -side top
+	pack [entry .adw.lf5.e] -fill both -expand 1 -side left
+	pack [button .adw.lf5.bc -text "Cancel" -command { destroy .adw}] -side right
+	pack [button .adw.lf5.bo -text "Copy code" -command {insertwidget; destroy .adw}] -side right
+	
+	# Name of widget
+	pack [ labelframe .adw.lf1 -text "Name of new widget"] -fill x
+	pack [ entry .adw.lf1.e1 -textvariable namewidget ] -fill x -expand 1
+	pack [label .adw.sep1] -side top -fill x
+	
+	# frame body of interface
+	pack [frame .adw.b ] -fill both -expand 1 -side top
+	
+	# Widget options
+	pack [frame .adw.b.c] -fill both -expand 1 -side left
+	pack [label .adw.b.c.t -text "All Options" -bg #808080 -fg #FFFFFF] -fill x
+	pack [listbox .adw.b.c.lb] -fill both -side left -expand 1
+	
+	# Widget type
+	pack [ labelframe .adw.b.l -text "Choose widget" -padx 5 -pady 5] -fill both -side left
+	grid [ button .adw.b.l.b0 -text "toplevel" -command [list insertoption $otoplevel "toplevel"]] -row  0 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b1 -text "button" -image wbutton -compound left -command [list insertoption $w1 "button"]] -row  1 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b2 -text "canvas" -command [list insertoption $ocanvas "canvas"]] -row  2 -column 0  -sticky nsew
+	grid [ button .adw.b.l.b3 -text "checkbutton"  -image wcheck -compound left ] -row  3 -column 0  -sticky nsew
+	grid [ button .adw.b.l.b4 -text "entry"  -image wentry -compound left ] -row  4 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b5 -text "frame" ] -row  5 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b6 -text "label"  -image wlabel -compound left ] -row  6 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b7 -text "listbox"  -image wlb -compound left ] -row  7 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b8 -text "labelframe" ] -row  8 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b9 -text "panedwindow" ] -row  9 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b10 -text "scale" ] -row  10 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b11 -text "scrollbar" ] -row 11 -column 0 -sticky nsew
+	grid [ button .adw.b.l.b12 -text "spinbox" ] -row  12 -column 0 -sticky nsew
+
+	# Selected options
+	pack [frame .adw.b.e] -fill both -expand 1 -side left
+	pack [label .adw.b.e.t -text "Selected" -bg #808080 -fg #FFFFFF] -fill x
+	pack [listbox .adw.b.e.lb] -fill both -side left -expand 1
+	
+	# Help message
+	pack [label .adw.msg -text "Double click to insert option or remove" -bg #808080 -fg #FFFFFF] -fill x -side bottom
+	focus  .adw.lf1.e1
+	# double click on main list
+	bind .adw.b.c.lb <Double-1> { 
+		switch [.adw.b.c.lb get active] {
+			"text" {ft "text"}
+			"textvariable" {ft "textvariable"}
+			"anchor" {fa "anchor"}
+		}
+		}
+		#double click on selected list
+		bind .adw.b.e.lb <Double-1> { deloption [.adw.b.e.lb get active] }
+}
+
+# # Insert all list of options for clicked widget
+proc insertoption {lw who} {
+	global ww
+	.adw.b.c.lb delete 0 end
+	foreach i $lw { .adw.b.c.lb insert end $i }
+	set ww $who
+	eval upviewcode
+}
+
+# ##################### FORM TO CHOOSE OPTIONS #######################
+
+# write text
+proc ft {who} {
+	global myarg
+	toplevel .tt
+	wm title .tt "Write text"
+	pack [label .tt.w -text "Enter $who :"] -fill x
+	pack [entry .tt.t -textvariable bobo] -fill x
+	pack [frame .tt.b] -fill both -expand 1
+	pack [button .tt.b.b0 -text "Cancel" -command {destroy .tt}] -side right
+	button .tt.b.b1 -text "Ok" -command {addoption $who $bobo}
+	pack .tt.b.b1  -side right
+	focus .tt.t
+}
+
+# Choose anchor
+proc fa {who} {
+		toplevel .at
+	wm title .at "Choose anchor"
+	grid [button .at.b0 -text "nw" -command [list addoption $who "nw"]] -row 0 -column 0  -sticky nsew
+	grid [button .at.b1 -text "n" -command [list addoption $who "n"]] -row 0 -column 1 -sticky nsew
+	grid [button .at.b2 -text "ne" -command [list addoption $who "ne"]] -row 0 -column 2 -sticky nsew
+	grid [button .at.b3 -text "w" -command [list addoption $who "w"]] -row 1 -column 0 -sticky nsew
+	grid [button .at.b4 -text "center" -command [list addoption $who "center"]] -row 1 -column 1 -sticky nsew
+	grid [button .at.b5 -text "e" -command [list addoption $who "e"]] -row 1 -column 2 -sticky nsew
+	grid [button .at.b6 -text "sw" -command [list addoption $who "sw"]] -row 2 -column 0 -sticky nsew
+	grid [button .at.b7 -text "s" -command [list addoption $who "s"]] -row 2 -column 1 -sticky nsew
+	grid [button .at.b8 -text "se" -command [list addoption $who "se"]] -row 2 -column 2 -sticky nsew
+	grid [button .at.b9 -text "Ok" -command {destroy .at}] -row 3 -column 1 -sticky nsew
+}
+
+# Choose color
+proc fc {} {
+}
+
+# Choose image
+proc fi {} {
+}
+
+# ###################### INSERT SELECTED OPTION IN LISTBOX 'SELECTED'
+proc addoption {myoption myval} {
+	.adw.b.e.lb insert end "-$myoption $myval"
+	.adw.b.c.lb delete [.adw.b.c.lb index active]
+ eval upviewcode
+}
+
+# ##################### Remove selected option and return to main list
+proc deloption {mychain} {
+	set op [lindex $mychain 0]
+	puts " la variable est $op"
+	.adw.b.c.lb insert end $op
+	.adw.b.e.lb delete [.adw.b.e.lb index active]
+ eval upviewcode
+}
+
+
+# # refresh source code line of widget
+proc upviewcode {} {
+	global codewidget
+	global namewidget
+	global ww
+	set allopt [foreach l [.adw.b.e.lb get 0 end] { puts $l }]
+	puts "allo $allopt"
+	.adw.lf5.e configure -text [concat $ww " " $namewidget " " $allopt]
+
+}

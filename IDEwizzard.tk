@@ -1,0 +1,69 @@
+set typedeprojet 1
+set cheminduprojet "~"
+set nomduprojet "Sans_titre"
+
+# ------------------------- Wizzard Form to create new project -----------------
+proc Form_Wizzard {} {
+	set whichproject [list "Graphic Tk project" "TCL Command line project" "TCL Command line with sqlite database"]
+	toplevel .w
+	wm geometry .w 500x400+200+100
+	wm title .w "Create new project"
+	pack [frame .w.title -bd 2] -fill x
+	pack [label .w.title.l -text " Wizzard New Project"] -fill both -expand 1 -side left
+	pack [button .w.title.bok -text "Ok" -command Wizzard_Click_Ok ] -side left
+	pack [button .w.title.bcancel -text "Annuler" -command Wizzard_Click_Cancel ] -side left
+	pack [label .w.logo -image icapp] -fill x
+	pack [label .w.l1 -text "Select projet type" -bg #404040 -fg #FFFFFF] -fill x -side top
+	pack [frame .w.f2] -fill x
+	tk_optionMenu .w.f2.omn which {*}$whichproject
+	pack .w.f2.omn -fill x -side top
+	pack [label .w.l5 -text "Select path of your new project:" -bg #404040 -fg #FFFFFF] -fill x -side top
+	pack [frame .w.f6] -fill x
+	pack [entry .w.f6.e7 -textvariable mypath] -side left -fill x -expand 1
+	.w.f6.e7 delete 0 end; .w.f6.e7 insert 0 "$::env(HOME)"
+	pack [button .w.f6.b8 -text "..." -command {global mypath; set mypath [Form_Choose_Folder]; focus .w.e10}] -side left
+	pack [label .w.l9 -text "Project Name" -bg #404040 -fg #FFFFFF] -fill x -side top
+	pack [entry .w.e10 ] -fill x
+	pack [frame .w.f11 -height 20] -fill x
+ focus .w.e10
+}
+
+# ----- Click on Ok Button -----
+proc Wizzard_Click_Ok {} {
+	set ndp [.w.e10 get]
+if {$ndp == ""} { tk_messageBox -type ok -icon warning -title Warning -message "Project need name before continu"
+		} else { 
+		global nomduprojet; set nomduprojet $ndp; Create_Project_Folder $ndp
+		}
+}
+
+# ----- Click on Cancel Button -----
+proc Wizzard_Click_Cancel {} {
+	destroy .w
+}
+
+
+# Ouverture fenêtre choisir un chemin pour le projet
+proc Form_Choose_Folder {} {
+	set dirp [tk_chooseDirectory -initialdir ~ -title "Répertoire pour le projet TK"]
+if {$dirp eq ""} { set dirp "$::env(HOME)"}
+return $dirp
+}
+
+# Test if folder exist and create project folder with main.tk file and project file pr8.proj
+proc Create_Project_Folder {NameOfProject} {
+global mypath; 	set sep "/"; set mydir $mypath$sep$NameOfProject
+# test if folder exist
+set result [file isdirectory $mydir]
+switch $result {
+	0 {file mkdir $mydir; set f "/pf8.proj"; set l $mydir$f; set f [open $l "w"]; close $f
+		unset f; unset l; set f "/main.tk"; set l $mydir$f; set f [open $l "w"] 
+		puts $f "# File created by IdeTK \n #  \n"; close $f
+		tk_messageBox -type ok -icon info -title "Project created" -message "Project $NameOfProject created successfully !"
+		global nomduprojet; set nomduprojet $NameOfProject; set sep "/"; set mypath $mypath$sep$nomduprojet$sep
+		Begin_Init_Form ; Project_Refresh; destroy .w }
+	1 { tk_messageBox -type ok -icon warning -title Warning -message "One folder with this name exist !" }
+	}
+}
+
+

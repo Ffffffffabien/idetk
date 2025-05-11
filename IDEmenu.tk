@@ -1,0 +1,98 @@
+# Main menu of IDETK
+
+# Main menu
+menu .m
+. configure -menu .m
+
+# File Menu
+menu .m.f  -tearoff 0
+.m add cascade -menu .m.f -label "File"  -underline 0
+.m.f add command -label "New project" -underline 0 -image [resizeIMG inew 16 16] -compound left -command Form_Wizzard
+.m.f add command -label "Open project" -underline 0 -image [resizeIMG iopen 16 16] -compound left -command Project_Form_Open
+.m.f add command -label "Save project" -underline 0 -image [resizeIMG isave 16 16] -compound left  -command { Save_Project }
+.m.f add command -label "Save project As..." -underline 0 -image [resizeIMG isaveas 16 16] -compound left -command { Form_Save_Project_As }
+.m.f add separator
+.m.f add command -label "Quit IDETK" -underline 0  -image [resizeIMG iquit 16 16] -compound left  -command {exit}
+
+# Edit Menu
+menu .m.e
+.m add cascade -menu .m.e -label "Edit"  -underline 0
+.m.e add command -label "Undo" -underline 0
+.m.e add command -label "Redo" -underline 0
+.m.e add separator
+.m.e add command -label "Cut"  -image [resizeIMG icut 16 16] -compound left -underline 0
+.m.e add command -label "Copy" -underline 0
+.m.e add command -label "Paste" -underline 0
+.m.e add separator
+.m.e add command -label "Got to line..." -underline 0
+.m.e add separator
+.m.e add command -label "Close editor"  -image [resizeIMG iquit 16 16] -compound left  -underline 0 -command {destroy .ihm}
+.m.e add command -label "Lock this file" -image [resizeIMG ilock 16 16] -compound left -underline 0
+
+# Project Menu
+menu .m.w  -tearoff 0
+.m add cascade -menu .m.w -label "Project"  -underline 0
+.m.w add command -label "Execute" -underline 0  -command executescript
+.m.w add separator
+.m.w add command -label "Translate" -underline 0
+.m.w add separator
+menu .m.w.g  -tearoff 0	
+.m.w.g add command -label "Source package" -underline 0 -command generatepackage
+.m.w add cascade -label "Generate" -underline 0 -menu .m.w.g
+.m.w add separator
+.m.w add command -label "publish on the web..." -underline 0
+.m.w add separator
+.m.w add command -label "Clean" -underline 0
+.m.w add command -label "Refresh" -underline 0
+.m.w add separator
+.m.w add command -label "Properties" -underline 0
+
+# Project Tools
+menu .m.t  -tearoff 0
+.m add cascade -menu .m.t -label "Tools"  
+.m.t add command -label "Find" 
+.m.t add command -label "Replace"
+.m.t add separator
+.m.t add command -label "Explore project" -command explore
+.m.t add command -label "Send by mail"
+.m.t add separator
+.m.t add command -label "Keyboard shortcuts"
+.m.t add command -label "IDETK preferences" -command fpref
+
+# Help menu
+menu .m.h  -tearoff 0
+.m add cascade -menu .m.h -label "?" 
+.m.h add command -label "Help index" -command loadhelp
+.m.h add command -label "Tips of the day"
+.m.h add separator
+.m.h add command -label "Ide TK help"  -command loadidehelp
+.m.h add command -label "About IDETK" -command fabout
+
+# ----- IDE main toolbar -----
+proc Ide_Toolbar {} {
+frame .t -bd 1 -relief raised
+button .t.b1 -image [resizeIMG inew 32 32] -relief flat -command {Form_Wizzard}
+button .t.b2 -image [resizeIMG iopen 32 32] -relief flat  -command {Project_Form_Open}
+button .t.b3 -image [resizeIMG isave 32 32] -relief flat 
+button .t.b4 -image [resizeIMG isaveas 32 32] -relief flat 
+button .t.b5 -image [resizeIMG iexec 32 32] -relief flat -command {executescript}
+button .t.b7 -image [resizeIMG iquit 32 32] -text "Quit" -compound right -relief flat -command {exit}
+
+pack .t.b1  .t.b2 .t.b3  .t.b4 .t.b5 -side left -padx 2 -pady 2
+pack .t.b7 -side right -padx 2 -pady 2
+pack .t -fill x
+}
+
+
+# ----- Generate package of project -----
+proc generatepackage {} {
+	global nomduprojet
+	puts "le nom est $nomduprojet"
+	set oldversion [Conf_Read "Version"]
+	set n [split $oldversion "."]
+	set b [expr [lindex $n 2] + 1 ]
+	set newversion [join $n "."]
+	Conf_Edit "Version" $newversion
+	Conf_Save
+	Compress_Project $newversion
+}

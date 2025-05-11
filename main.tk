@@ -1,0 +1,48 @@
+package require Img
+package require Tk
+package require Tix
+
+# Tk IDE to make tcl tk projets
+
+#source designer.tk
+source editor.tk; source begin.tk; source icon.tk
+source IDEmenu.tk; source IDEpref.tk; source IDEwizzard.tk
+source project.tk; source ihm.tk; source widget.tk
+source exec.tk; source about.tk; source help.tk
+source setting.tk; source theme.tk
+set lproject [list ""] ; # list of projects when open form 'open project'
+set mypath ""
+set mysoft "wish"
+set mytheme ""
+set desctheme ""
+set nameofmytheme ""
+set ims 16
+set icontoolbar 32
+set hexcode #000000
+set codewidget ""
+set namewidget ""
+set starfile ""
+set currentfile ""
+set ww ""
+set get_index 1.0
+set allproc ""
+set hproj 0
+set ecolor ""
+set oldindex 0.0
+
+set tw "" ; # Text modified or not in editor
+
+# Main form
+wm title . "IdeTK"
+wm geometry . [winfo vrootwidth  .]x[winfo vrootheight .]+0+0
+wm iconphoto . -default icapp
+
+Idetk_Begin ; # Open Begin form
+
+
+proc Test_If_Exist {} {
+	
+}
+
+
+

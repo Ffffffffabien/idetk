@@ -1,0 +1,149 @@
+
+
+# show keywords when type keyboard on editor
+proc keyword:search {kw} {
+	set k  {"after" "errorInfo" "load" "pwd" "tcl_rcFileName" "append" "eval" "lrange" \
+	 "re_syntax" "tcl_startOfNextWord" "apply" "exec" "lrepeat" "read" "tcl_startOfPreviousWord" \
+	 "argc" "exit" "lreplace" "refchan" "tcl_traceCompile" "argv" "expr" "lreverse" "regexp" \
+	 "tcl_traceExec" "argv0" "fblocked" "lsearch" "registry" "tcl_version" "array" "fconfigure" \
+	 "lset" "regsub" "tcl_wordBreakAfter" "\x61uto_execok" "fcopy" "lsort" "rename" "tcl_wordBreakBefore" \ 
+	 "auto_import" "file" "mathfunc" "return" "tcl_wordchars" "auto_load" "fileevent" "mathop" "safe" \
+	 "tcltest" "auto_mkindex" "filename" "memory" "scan" "tell" "auto_path" "flush" "msgcat" "seek" \
+	 "throw" "auto_qualify" "for" "my" "self" "time" "auto_reset" "foreach" "namespace" "set" "timerate" \
+	 "bgerror" "format" "next" "socket" "tm" "binary" "gets" "nextto" "source" "trace" "break" \
+	 "glob" "oo::class" "split" "transchan" "catch" "global" "oo::copy" "string" "try" "cd" \
+	 "history" "oo::define" "subst" "unknown" "chan" "http" "oo::objdefine" "switch" "unload" "clock" \
+	 "if" "oo::object" "tailcall" "unset" "close" "incr" "oo::Slot" "Tcl" "update" "concat" "info" \
+	 "open" "tcl::prefix" "uplevel" "continue" "interp" "package" "tcl_endOfWord" "upvar" "coroutine"\
+	 "join" "parray" "tcl_findLibrary" "variable" "dde" "lappend" "pid" "tcl_interactive" "vwait" \
+	 "dict" "lassign" "pkg::create" "tcl_library" "while" "encoding" "lindex" "pkg_mkIndex" \
+	 "tcl_nonwordchars" "yield" "env" "linsert" "platform" "tcl_patchLevel" "yieldto" "eof"\
+	 "list" "platform::shell" "tcl_pkgPath" "zlib" "error" "llength" "proc" "tcl_platform" \
+	 "errorCode" "lmap" "puts" "tcl_precision"  "-name" "-bd" "-borderwidth" "-menu" "-relief" \
+	 "-screen" "-use" "-background" "-bg" "-colormap" "-container" "-cursor" "-height" \
+	 "-highlightbackground" "-highlightcolor" "-highlightthickness" "-padx" "-pady" \
+	 "-takefocus" "-title" "-visual" "-x" "-y" "-width" "-activebackground" "-activeforeground" \
+	 "-anchor" "-background" "-bd" "-bg" "-bitmap" "-command" "-fill" "-expand" "-side"\
+	 "-compound" "-cursor" "-default" "-disabledforeground" "-fg" "-font" "-troughcolor"\
+	 "-foreground" "-height" "-highlightbackground" "-highlightcolor" "-highlightthickness" \
+	 "-image" "-justify" "-length" "-overrelief" "-relief" "-repeatdelay" "-repeatinterval" \
+	 "-state" "-takefocus" "-text" "-textvariable" "-underline" "-width" "-wrap" "-pack" "tk_optionMenu" \
+	 "-grid" "button" "listbox" "label" "labelframe" "ttk::notebook" "scale" "checkbox" "text" "radiobutton" \
+	 "menu" "pack" "grid" "place" "file" "atime" "attributes" "channels" "copy" "delete" \
+	 "dirname" "executable" "exists" "isdirectory" "isfile" "join" "insert" }
+
+	 # search writen text
+	 set myresult [lsearch -all $k $kw*]
+	 #refresh help listbox
+	.hlp.l delete 0 end
+	set c [llength $myresult]
+	if {$c == 0} {Help_Remove_Form} else {foreach i $myresult { .hlp.l insert end [lindex $k $i]}}
+	
+
+}
+
+# insert Command with some options.
+proc Keyword_insert {k} {
+	switch $k {
+	"button" { .ihm.editor insert [.ihm.editor index insert] "button ." }
+	"tk_optionMenu" { .ihm.editor insert [.ihm.editor index insert] "tk_optionMenu ." } 
+	"scale" { .ihm.editor insert [.ihm.editor index insert] "scale ." }
+	"scrollbar" { .ihm.editor insert [.ihm.editor index insert] "scrollbar ." }
+	"ttk::notebook" { .ihm.editor insert [.ihm.editor index insert] "ttk::notebook ." }
+	"tk_popup" { .ihm.editor insert [.ihm.editor index insert] "tk_popup ." }
+	"ttk::panedwindow" { .ihm.editor insert [.ihm.editor index insert] "ttk::panedwindow ." }
+	"ttk::progressbar" { .ihm.editor insert [.ihm.editor index insert] "ttk::progressbar ." }
+	"label" { .ihm.editor insert [.ihm.editor index insert] "label ." }
+	"labelframe" { .ihm.editor insert [.ihm.editor index insert] "labelframe ." }
+	"spinbox" { .ihm.editor insert [.ihm.editor index insert] "spinbox ." }
+	"ttk::radiobutton" { .ihm.editor insert [.ihm.editor index insert] "ttk::radiobutton ." }
+	"labelframe" { .ihm.editor insert [.ihm.editor index insert] "labelframe ." }
+	"text" { .ihm.editor insert [.ihm.editor index insert] "text ." }
+	"ttk::scale" { .ihm.editor insert [.ihm.editor index insert] "ttk::scale ." }
+	"canvas" { .ihm.editor insert [.ihm.editor index insert] "canvas ." }
+	"listbox" { .ihm.editor insert [.ihm.editor index insert] "listbox ." }
+	"ttk::scrollbar" { .ihm.editor insert [.ihm.editor index insert] "ttk::scrollbar ." }
+	"checkbutton" { .ihm.editor insert [.ihm.editor index insert] "checkbutton ." }
+	"ttk::separator" { .ihm.editor insert [.ihm.editor index insert] "ttk::separator ." }
+	"ttk::sizegrip" { .ihm.editor insert [.ihm.editor index insert] "ttk::sizegrip ." }
+	"ttk::spinbox" { .ihm.editor insert [.ihm.editor index insert] "ttk::spinbox ." }
+	"-text" { .ihm.editor insert [.ihm.editor index insert] "-text \x22\x22"; focus .ihm.editor; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 1] }
+	"-side" {.ihm.editor insert [.ihm.editor index insert] "-side ";  global tw; set tw "le"; Help_View; .hlp.l insert 0 {left right top bottom}}
+	"proc" { .ihm.editor insert [.ihm.editor index insert] "proc  { } { }"; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 8] }
+	"if" { .ihm.editor insert [.ihm.editor index insert]  " if {  } { }"; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 6] }
+	"else" {.ihm.editor insert [.ihm.editor index insert] " else {  }" ; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 2] }
+	"foreach" { .ihm.editor insert [.ihm.editor index insert] "foreach  { }"; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 2] }
+	"-bg" { .ihm.editor insert [.ihm.editor index insert] "-bg "; Editor_Choose_Color }
+	"-fg" { .ihm.editor insert [.ihm.editor index insert] "-fg "; Editor_Choose_Color }	
+	"-background" { .ihm.editor insert [.ihm.editor index insert] "-background "; Editor_Choose_Color }
+	"-foreground" { .ihm.editor insert [.ihm.editor index insert] "-foreground "; Editor_Choose_Color }
+	"for" { .ihm.editor insert [.ihm.editor index insert] "for { } { } { }" }
+	"while" { .ihm.editor insert [.ihm.editor index insert] "while { } { }" }
+	"-command" { .ihm.editor insert [.ihm.editor index insert] "-command { }"; .ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 2] }
+	"file" {.ihm.editor insert [.ihm.editor index insert] "file " }
+	default { .ihm.editor insert [.ihm.editor index insert] "$k " }
+}
+	 after idle [list focus .ihm.editor]
+}
+
+# ----- Lecture du fichier Fast doc à afficher dans l'aide de saisie rapide -----
+proc Help_Insert {k} {
+	global script_path; .hlp.t delete 0.0 end; .hlp.t insert end "$k \n" "h1"
+	set p0 "/fdoc/"; set p1 ".fdoc"; set f $script_path$p0$k$p1; set fe [file exists $f]
+	#test si le fichier existe
+	switch $fe {
+		0 {set fw [open $f w]; set d ";synopsys\n;example\n;property"; puts $fw $d; close $fw}
+		1 {
+			set fp [open $f r]; set fdata [read $fp]; set data [split $fdata "\n"]; close $fp
+			foreach l $data {set b [split $l ";"] ;
+			.hlp.t insert end [lindex $b 0] [lindex $b 1] ; .hlp.t insert end "\n"}}
+	}
+}
+
+# ----- Show help box in editor during typing keyboard -----
+proc Help_View {} {
+if {[winfo exist .hlp] == 0} {
+	toplevel .hlp
+	set mx [expr [winfo pointerx .ihm.editor] + 5]
+	set my [expr [winfo pointery .ihm.editor] + 5]
+	wm geometry .hlp 400x100+$mx+$my
+	wm overrideredirect .hlp 1
+	pack [listbox .hlp.l] -side left -fill both
+	pack [text .hlp.t] -side right -fill both -expand 1 
+	.hlp.t tag configure "h1" -font {-family helvetica -size 18 -weight bold}
+	.hlp.t tag configure "h2" -font {-family helvetica -size 14 -weight bold}
+	.hlp.t tag configure "synopsys" -foreground green4  -font {-family helvetica -size 12}
+	.hlp.t tag configure "description"  -font {-family courier -size 10 -weight bold -slant italic}
+	.hlp.t tag configure "example" -foreground blue
+	.hlp.t tag configure "sunken" -background #CAD5F7 -relief sunken -borderwidth 1
+	.hlp.t tag configure "property" -font {-family helvetica -size 10}
+	bind .hlp.l <<ListboxSelect>> { set mykeyword [.hlp.l get [.hlp.l curselection]]; Help_Insert $mykeyword }
+bind .hlp.l <KeyRelease> {
+	set mykey %K
+	switch $mykey {
+	KP_Enter {global tw; set mykeyword [.hlp.l get [.hlp.l curselection]]; puts $mykeyword
+	# remove begining of word writen
+	set oldidx [Remove_text [.ihm.editor index insert] [string length $tw]]
+	# insert selected command
+	Keyword_insert $mykeyword
+	# delete all keywords in list
+	Help_Remove_Form; focus .ihm.editor; global tw; set tw ""}
+	Return {global tw; set mykeyword [.hlp.l get [.hlp.l curselection]]; puts $mykeyword
+	# remove begining of word writen
+	set oldidx [Remove_text [.ihm.editor index insert] [string length $tw]]
+	# insert selected command
+	Keyword_insert $mykeyword
+	# delete all keywords in list
+	Help_Remove_Form; focus .ihm.editor; global tw; set tw ""}
+}}
+}}
+
+# ----- Remove Help box if exist -----
+proc Help_Remove_Form {} {
+	if {[winfo exist .hlp]==1} {destroy .hlp}
+}
+
+
+
+
+

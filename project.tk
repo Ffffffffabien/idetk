@@ -1,0 +1,124 @@
+# ----- Form Open existing project -----
+proc Project_Form_Open {} {
+global starfile mypath
+toplevel .op ;	wm title .op " Select Tk project"; 	wm geometry .op 600x500
+pack [ labelframe .op.f1 -bg #DFDFDF -padx 5 -pady 5 -text "Current path" ] -fill x
+pack [ label .op.f1.l1 -text "$::env(HOME)" -bg white] -side left -fill both -expand 1
+# Main frame for body
+pack [ frame .op.b ] -fill both -expand 1
+# Left frame for list of folders
+pack [ labelframe .op.b.l -text " Folder path " -padx 5 -pady 5] -fill both  -side left
+# Right frame for list of projects
+pack [ labelframe .op.b.r -text " Founded project in selected path " -padx 5 -pady 5] -fill both -side left -expand 1
+
+# Icons list of project in folder (pf8.proj file)
+pack [listbox .op.b.r.tv2 ] -fill both -expand 1
+
+#foreach l $m {$tlist insert end -itemtype imagetext -image ifolder -text $l  }
+proc browse {t} {
+	global lproject ; set myproject [lindex $lproject $t]
+	readpf8file $myproject ; Begin_Init_Form; destroy .op
+}
+# Frame left content
+pack [ button .op.b.l.b1 -text "up" -command {
+set g [split $mypath "/"] ; set rep [ lrange $g 1 end-1]; set sep "/"; set m [join $rep "/"] 
+set mypath $sep$m;  getfolder } ] -side top
+pack [ttk::treeview .op.b.l.tv1] -fill both -expand 1 
+set mypath "$::env(HOME)"
+getfolder
+
+# Double Clic sur un projet de la treeview
+bind .op.b.r.tv2 <Double-1>  {
+	global mypath; set sep "/"; set u [.op.b.r.tv2 get active]
+	set mypath $mypath$sep$u; set mf "/pf8.proj";  set myproject $mypath$mf
+	cd $mypath ; readpf8file $myproject ; Begin_Init_Form; Theme_Load; destroy .op }	
+
+
+# Double Clic sur un repertoire de la treeview
+.op.b.l.tv1 tag bind fold <Double-1>  {
+			global mypath; set sep "/"; set y [.op.b.l.tv1 item [.op.b.l.tv1 selection] -text]
+			set mypath $mypath$sep$y ; getfolder  }
+
+}
+
+# --------------------------------- refresh folders in  folder explorer
+proc getfolder {} {
+	global mypath lproject ; set lproject ""
+	set r [glob -directory $mypath *]
+	.op.b.l.tv1 delete [.op.b.l.tv1 children {}]
+	.op.b.r.tv2 delete 0 end
+	set mylist ""
+		foreach d $r {	set b [file isdirectory $d] ;
+		if {$b == 1} { set myrep [ split $d "/" ] ;
+		lappend mylist [ lindex $myrep [ expr [ llength $myrep ] -1  ] ] 
+		testifproject $d }
+		}
+
+# sort folders by alphabetic name
+set mylist [lsort -dictionary $mylist]
+foreach l $mylist {.op.b.l.tv1 insert "" end -text $l -image [resizeIMG idir 24 24] -tags fold}
+# update path view
+.op.f1.l1 configure -text $mypath
+}
+
+# ------------------------------------ test if IdeTk project exist (testing if pf8.proj file exist) and add in project list
+proc testifproject { mydir } {
+	set mf "/pf8.proj"
+	set myfile $mydir$mf
+	set f [file exist $myfile]
+	switch $f { 1 { global lproject; lappend lproject $myfile; puts $lproject; set np [separatename $myfile end-1]  ; il $np } }
+}
+
+proc il { n } {
+.op.b.r.tv2 insert end $n
+}
+
+# Extract project name from full path 
+proc separatename { name index} {
+	set a [split $name "/"]; return [lindex $a $index]
+} 
+
+# Open and read Choosen file project
+proc readpf8file { file } {
+	global nomduprojet; global starfile
+	set fp [open $file r]; set fdata [read $fp]; set data [split $fdata "\n"]; close $fp
+	set a 0; foreach line $data { lappend a $line}
+	set nomduprojet [lindex $a 1]; set starfile [lindex $a 2]; Project_Refresh
+}
+
+
+# 
+# ################# REFRESH LIST OF FILES ########################
+# 
+proc Project_Refresh_List {w} {
+	global nomduprojet
+	global mypath
+	cd $mypath
+	set c 0
+	set f [glob "*.tk"]
+	foreach line $f { $w insert "" end -id $line -image [resizeIMG iform 16 16] -text $line -tags ttk } 
+	$w tag bind ttk <1> { global currentfile ; set currentfile [%W identify item %x %y]}
+	$w tag bind ttk <Double-1> { destroy .ihm; global currentfile; set currentfile [%W identify item %x %y]; Codedit $currentfile}
+}
+
+
+# ------------------------ Save Project --------------------------
+proc Project_Save {} {
+
+}
+
+# ------------------------ Form Save Project As ----------------------------
+proc Project_Form_Save_As {} {
+
+}
+
+# ----- Refresh list of files in project treeview -----
+proc Project_Refresh {} {
+	if {[winfo exist .proj] == 1} {destroy .proj}
+	pack [frame .proj -bg white -bd 4] -fill y -side left
+	pack [label .proj.t1 -bg black -fg white -text "Project files"] -fill x
+	pack [ttk::treeview .proj.t ] -fill both -expand 1
+	Project_Refresh_List .proj.t
+}
+
+

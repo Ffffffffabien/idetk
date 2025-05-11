@@ -1,0 +1,95 @@
+proc fpref {} {
+global ecolor; global script_path; global ims
+global icontoolbar; global themename; global desctheme
+toplevel .pref; wm geometry .pref 500x550; wm title .pref "IDETK preferences"
+
+# barre de titre
+pack [frame .pref.t -bg #A0A0A0] -fill x
+pack [label .pref.t.title -bg #1B0303 -fg #FFFFFF -text "Ide Tk configuration"] -fill both -expand 1 -side left
+pack [button .pref.t.bcancel -text "Cancel" -command {destroy .pref}] -side left
+pack [button .pref.t.bok -text "OK"  -command {destroy .pref}] -side left
+pack [ttk::notebook .pref.nb ] -fill both -expand 1
+
+# Tab Colors and themes
+ttk::frame .pref.nb.tab1
+.pref.nb add .pref.nb.tab1 -text "Editor theme"
+
+# Content of tab colors and themes
+pack [label .pref.nb.tab1.separator1] -fill x
+pack [labelframe .pref.nb.tab1.l1 -text "Themes available for editor" ] -fill x -padx 5 -pady 5
+pack [frame .pref.nb.tab1.l1.left -padx 5 -pady 5] -side left -fill both -expand 1
+pack [label .pref.nb.tab1.l1.left.l1 -text "Double click to select" -bg #000000 -fg #FFFFFF] -fill x
+pack [listbox .pref.nb.tab1.l1.left.lbtheme] -fill both -expand 1
+pack [button .pref.nb.tab1.l1.left.bsave -text "Save new theme"]
+
+pack [frame .pref.nb.tab1.l1.right -padx 5 -pady 5] -side right -fill both -expand 1
+pack [button .pref.nb.tab1.l1.right.b1 -text "Editor background" -command [list Theme_Change_Button_Color 1]] -fill x
+pack [button .pref.nb.tab1.l1.right.b2 -text "Editor foreground ( normal text)" -command [list Theme_Change_Button_Color 2]] -fill x
+pack [button .pref.nb.tab1.l1.right.b3 -text "Keywords"  -command [list Theme_Change_Button_Color 3]] -fill x
+pack [button .pref.nb.tab1.l1.right.b4 -text "Operators and symbols"  -command [list Theme_Change_Button_Color 4]] -fill x
+pack [button .pref.nb.tab1.l1.right.b5 -text "Commentary"  -command [list Theme_Change_Button_Color 5]] -fill x
+pack [button .pref.nb.tab1.l1.right.b6 -text "Options"  -command [list Theme_Change_Button_Color 6]] -fill x
+pack [button .pref.nb.tab1.l1.right.b7 -text "Arguments"  -command [list Theme_Change_Button_Color 7]] -fill x
+pack [button .pref.nb.tab1.l1.right.b8 -text "Widgets"  -command [list Theme_Change_Button_Color 8]] -fill x
+	pack [button .pref.nb.tab1.l1.right.b9 -text "Highlight line"  -command [list Theme_Change_Button_Color 9]] -fill x
+	
+	set mf "/theme/*.theme"; set where $script_path$mf; set alltheme [glob $where]
+	.pref.nb.tab1.l1.left.lbtheme delete 0 end
+	foreach l $alltheme {set n [Theme_Get_Name $l]; .pref.nb.tab1.l1.left.lbtheme insert end $n}
+	
+	pack [label .pref.nb.tab1.separator2] -fill x
+	pack [labelframe .pref.nb.tab1.l4 -text "Theme description" -padx 5 -pady 5] -fill x
+	entry .pref.nb.tab1.l4.e1 -textvariable desctheme
+	pack .pref.nb.tab1.l4.e1 -side left -fill x -expand 1
+	pack [label .pref.nb.tab1.separator3] -fill x
+	pack [labelframe .pref.nb.tab1.l3 -text "Name of Personal theme" -padx 5 -pady 5] -fill x
+	entry .pref.nb.tab1.l3.e1 -textvariable themename
+	pack  .pref.nb.tab1.l3.e1 -side left -fill x -expand 1
+	pack [button .pref.nb.tab1.l3.bsave -text "Save\ntheme" -command {Theme_Save_As $themename}] -side left 
+	
+	# Icons preferences
+	ttk::frame .pref.nb.tab2
+	.pref.nb add .pref.nb.tab2 -text "Icons"
+	pack [labelframe .pref.nb.tab2.l1 -text "Size of Toolbar icon" -padx 5 -pady 5] -fill x
+	pack [entry .pref.nb.tab2.l1.e1 -textvariable icontoolbar] -fill x -expand 1
+	pack [labelframe .pref.nb.tab2.l2 -text "Size of menu icon" -padx 5 -pady 5] -fill x
+	pack [entry .pref.nb.tab2.l2.e2 -textvariable ims] -fill x -expand 1
+	Theme_Load
+	Theme_Refresh_View
+
+	bind .pref.nb.tab1.l1.left.lbtheme <<ListboxSelect>> {
+	set idx [.pref.nb.tab1.l1.left.lbtheme curselection]
+	Conf_Edit "Theme" [.pref.nb.tab1.l1.left.lbtheme get $idx]
+	Conf_Save; after 100
+	Theme_Load; after 100
+	Theme_Refresh_View; puts [winfo exists .ihm.editor]
+	if {[winfo exist .ihm] == 1} { destroy .ihm; Codedit $currentfile} {Codedit $currentfile}; # Refresh editor with new color
+		}
+}
+
+# Extract only name from theme path
+proc Theme_Get_Name {t} {
+	set a [split $t "/"]
+	set z [llength $a]
+	set b [split [lindex $a end] "."]
+	return [lindex $b 0]
+}
+
+# open tkchoose color to change color of button
+proc getcolor {widget} {
+    set current_color [tk_chooseColor -title "Choose a background color" -parent .]
+    $widget configure -background $current_color
+    return $current_color
+}
+
+# ----- Change color of selected button -----
+proc Theme_Change_Button_Color {n} {
+   global ecolor; global currentfile
+   lset ecolor $n [getcolor .pref.nb.tab1.l1.right.b$n ]
+   if {[winfo exist .ihm] == 1} { destroy .ihm; Codedit $currentfile} {Codedit $currentfile}; # Refresh editor with new color
+}
+
+
+
+
+

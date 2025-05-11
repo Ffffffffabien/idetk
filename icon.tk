@@ -1,0 +1,55 @@
+# Image definition for IDETK
+
+# icone de l'application
+image create photo icapp -file "./img/icon.png"
+
+# images toolbar sous menu principal
+image create photo inew -file "./img/new.png"
+image create photo iopen -file "./img/open.png"
+image create photo isave -file "./img/save.png"
+image create photo isaveas -file "./img/save-as.png"
+image create photo iexec -file "./img/run.png"
+image create photo iquit -file "./img/exit.png"
+image create photo iform -file "./img/form.png"
+image create photo idir -file "./img/folder.png"
+image create photo iediteur -file "./img/editeur.png"
+image create photo ireload -file "./img/reload.png"
+image create photo ilock -file "./img/lock.png"
+image create photo ihelp -file "./img/help.png"
+
+
+# Images toolbar des widgets
+image create photo wwidget -file "./img/widget.png"
+image create photo wnowidget -file "./img/wnowidget.png"
+image create photo wform -file "./img/wform.png"
+image create photo wbutton -file "./img/wbutton.png"
+image create photo wlabel -file "./img/wlabel.png"
+image create photo wradio -file "./img/wradiobutton.png"
+image create photo wcheck -file "./img/wcheckbutton.png"
+image create photo wentry -file "./img/wentry.png"
+image create photo wnb -file "./img/wnotebook.png"
+image create photo wlb -file "./img/wlistbox.png"
+image create photo wcv -file "./img/wcolumnview.png"
+image create photo wcombo -file "./img/wcombobox.png"
+image create photo icut -file "./img/cut.png"
+image create photo icopy -file "./img/copy.png"
+image create photo ipaste -file "./img/paste.png"
+image create photo irun -file "./img/run.png"
+image create photo ifind -file "./img/find.png"
+image create photo icomment -file "./img/comment.png"
+image create photo icolor -file "./img/color.png"
+image create photo ifont -file "./img/font.png"
+image create photo iproj -file "./img/puzzle.png"
+
+# Images du wizzard nouveau projet
+image create photo iterm -file "./img/term.xpm"
+image create photo itk -file "./img/tk.xpm"
+
+
+ 
+ proc resizeIMG { myimg wi he } {
+	 set factor [expr 128 / $wi]
+	set Imodified [image create photo -width $wi -height $he]
+    $Imodified copy $myimg -shrink -subsample $factor
+     return $Imodified
+ }

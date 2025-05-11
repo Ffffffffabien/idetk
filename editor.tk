@@ -1,0 +1,421 @@
+#
+############# Code editor #########################
+#
+
+proc Codedit {myfile} {
+	global ecolor allproc
+
+# Creation de la frame principale 
+pack [frame .ihm -bg #808080 -bd 4] -side left -fill both -expand 1
+# Messages to inform user what button
+pack [frame .ihm.title ] -side top -fill x
+pack [label .ihm.title.lmsg -text ""  -bg #FDFFC6] -side left
+pack [label .ihm.title.namefile -text $myfile -bg black -fg white] -fill x
+	
+# Toolbar editor
+pack [frame .ihm.t -bg #CFCFCF]  -fill x
+pack [button .ihm.t.b1 -image [resizeIMG inew 32 32] -command { Editor_New_File } ] -side left -padx 2 -pady 2
+pack [button .ihm.t.b2 -image [resizeIMG iopen 32 32] -command { Editor_Open_File }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b3 -image [resizeIMG isave 32 32] -command { Editor_Save_File }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b4 -image [resizeIMG isaveas 32 32] -command { Editor_Save_As }] -side left -padx 2 -pady 2
+pack [label .ihm.t.sep1 -width 2] -side left
+pack [button .ihm.t.b5 -image [resizeIMG icut 32 32] -command { Editor_Cut_Code }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b6 -image [resizeIMG icopy 32 32] -command { Editor_Copy_Code }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b7 -image [resizeIMG ipaste 32 32] -command { Editor_Paste_Code }] -side left -padx 2 -pady 2
+pack [label .ihm.t.sep2 -width 2] -side left
+pack [button .ihm.t.b8 -image [resizeIMG ifind 32 32] -command { Editor_Search_Form }] -side left -padx 2 -pady 2
+pack [label .ihm.t.sep3 -width 2] -side left
+pack [button .ihm.t.b9 -image [resizeIMG icomment 32 32] -command { .ihm.editor insert [.ihm.editor index insert] "# "}] -side left -padx 2 -pady 2
+pack [button .ihm.t.b10 -image [resizeIMG icolor 32 32] -command { Editor_Choose_Color }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b11 -image [resizeIMG ifont 32 32] -command { selectfont }] -side left -padx 2 -pady 2
+pack [button .ihm.t.b12 -image [resizeIMG wwidget 32 32] -command {global codewidget; set codewidget ""; addwidget}] -side left -padx 2 -pady 2
+pack [ttk::combobox .ihm.t.cb1 -textvariable allproc] -fill x -side left
+pack [button .ihm.t.bq  -image [resizeIMG iquit 32 32] -command {destroy .ihm; destroy .help}] -side right -padx 2 -pady 2
+pack [label .ihm.t.rc -bg white -fg black -font {System 12} -text "0.0"] -side right
+
+# Create code editor
+puts [lindex $ecolor 1] 
+text .ihm.editor -bg [lindex $ecolor 1] -fg [lindex $ecolor 2] -yscrollcommand ".ihm.scroll set" -setgrid true -width 40 -height 10 -wrap word
+scrollbar .ihm.scroll -command ".ihm.editor yview"
+pack .ihm.scroll -side right -fill y
+pack .ihm.editor -expand 1 -fill both
+
+bind .ihm.t.b1 <Enter> {.ihm.title.lmsg configure -text "Create new tk file" -anchor w}
+bind .ihm.t.b1 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b2 <Enter> {.ihm.title.lmsg configure -text "Load tk file" -anchor w}
+bind .ihm.t.b2 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b3 <Enter> {.ihm.title.lmsg configure -text "Save file" -anchor w}
+bind .ihm.t.b3 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b4 <Enter> {.ihm.title.lmsg configure -text "Save tk file as..." -anchor w}
+bind .ihm.t.b4 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b5 <Enter> {.ihm.title.lmsg configure -text "     Cut selected code" -anchor w}
+bind .ihm.t.b5 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b6 <Enter> {.ihm.title.lmsg configure -text "     Copy selected code" -anchor w}
+bind .ihm.t.b6 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b7 <Enter> {.ihm.title.lmsg configure -text "     Paste code" -anchor w}
+bind .ihm.t.b7 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b8 <Enter> {.ihm.title.lmsg configure -text "          Search code" -anchor center}
+bind .ihm.t.b8 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b9 <Enter> {.ihm.title.lmsg configure -text "Insert one comment line" -anchor center}
+bind .ihm.t.b9 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b10 <Enter> {.ihm.title.lmsg configure -text "Inser Color" -anchor center}
+bind .ihm.t.b10 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b11 <Enter> {.ihm.title.lmsg configure -text "Insert Font" -anchor center}
+bind .ihm.t.b11 <Leave> {.ihm.title.lmsg configure -text ""}
+bind .ihm.t.b12 <Enter> {.ihm.title.lmsg configure -text "Add new widget" -anchor center}
+bind .ihm.t.b12 <Leave> {.ihm.title.lmsg configure -text ""}
+focus .ihm.editor
+
+# define tag color
+.ihm.editor configure -insertbackground  [lindex $ecolor 2] -font {System 12}
+.ihm.editor tag configure cbg -foreground [lindex $ecolor 1] -font { System  12}
+.ihm.editor tag configure cfg -foreground [lindex $ecolor 2] -font { System  12}
+.ihm.editor tag configure ckeyword -foreground [lindex $ecolor 3] -font {System 12 bold}
+.ihm.editor tag configure coperator -foreground [lindex $ecolor 4] -font { System 14}
+.ihm.editor tag configure ccomment -foreground [lindex $ecolor 5] -font { System  11}
+.ihm.editor tag configure cargument -foreground [lindex $ecolor 6] -font { System  12}
+.ihm.editor tag configure cconstant -foreground [lindex $ecolor 7] -font { System  12}
+.ihm.editor tag configure cwidget -foreground [lindex $ecolor 8] -font { System 12 bold}
+.ihm.editor tag configure cevent -foreground [lindex $ecolor 9] -font { System 12 bold}
+.ihm.editor tag configure cline -background [lindex $ecolor 9]
+
+# open file to edit
+global mypath
+set sep "/"
+set fp [open $mypath$sep$myfile r]
+set file_data [read $fp]
+.ihm.editor insert end $file_data
+close $fp
+set fromIdx 0.0
+after 100 [list colorize .ihm.editor $fromIdx]
+bind .ihm.editor <1> {
+		set a [.ihm.editor index insert]; .ihm.t.rc configure -text $a
+	.ihm.editor tag remove cline 1.0 end
+	.ihm.editor tag add cline [.ihm.editor index "insert linestart"] [.ihm.editor index "insert lineend+1c"]}   
+	tk_messageBox -type ok -icon info -title Warning -message [info procs]
+	
+bind .ihm.editor <KeyRelease> {
+	set a [.ihm.editor index insert]; .ihm.t.rc configure -text $a
+	set mykey %K
+	puts $mykey
+	switch $mykey {
+		Return {global tw ; set tw "";puts "hellodfd"; Help_Remove_Form ; set fromIdx 0.0; after 100 [list colorize .ihm.editor $fromIdx]}
+		space {global tw; set tw ""; Help_Remove_Form}
+		KP_Enter {global tw; set tw ""; Help_Remove_Form }
+		BackSpace {global tw; set tw [string range $tw 0 end-1]; if {$tw ==""} {Help_Remove_Form} else {Help_View; keyword:search $tw}}
+		KP_Subtraminus {global tw;set d "-"; Help_View; set tw $tw$d; keyword:search $tw}
+		KP_Subtract {global tw; set d "-"; Help_View; set tw $tw$d; keyword:search $tw}
+		quotedbl { set newidx [ Remove_text [.ihm.editor index insert] 1 ] ; .ihm.editor insert $newidx "\x22\x22" ;
+				.ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 1]}
+		bracketleft { set newidx [ Remove_text [.ihm.editor index insert] 1 ] ; .ihm.editor insert $newidx "\x5B\x5D";
+				.ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 1]}
+		braceleft { ; set newidx [ Remove_text [.ihm.editor index insert] 1] ; .ihm.editor insert $newidx "\x7B\x7D";
+				.ihm.editor mark set insert [Backward_Cursor [.ihm.editor index insert] 1]}
+		Down { set max [.hlp.l size]; set idx [.hlp.l get active] ;puts "idx est  $idx et max est $max"; .hlp.l select clear 0 end;
+ 				if {$idx < $max} {set idx [incr idx] ;.hlp.l select set $idx $idx} }
+		Up {}
+		period {Help_Remove_Form} ;  # dot symbol
+		default {global tw; set tw $tw$mykey; Help_View; keyword:search $tw}
+
+	}
+
+}} 
+
+proc Get_Line {c} {
+	set a [split $c "."]
+	return [lindex $a 0]
+}
+
+# Remove text in editor from 'where' and 'how' many characters.
+proc Remove_text {where how} {
+	set oldidx [ Backward_Cursor $where $how ]
+	set newidx [.ihm.editor index insert]
+	.ihm.editor delete  $oldidx $newidx;
+	return $oldidx
+}
+
+# Move cursor of editor forward on the same line
+proc Forward_Cursor { origin how } {
+	set c [split $origin .]
+	set b [expr [lindex $c 1] + $how]
+	set t0 [lindex $c 0]; set t1 "."; set newidx $t0$t1$b
+	return $newidx
+}
+
+# Move cursor from editor Backward on the same line
+proc Backward_Cursor { origin how } {
+	set c [split $origin .]
+	set b [expr [lindex $c 1] - $how]
+	set t0 [lindex $c 0]; set t1 "."; set newidx $t0$t1$b
+	return $newidx
+}
+
+
+proc colorize {w fromIdx} {
+    set toIdx [$w index insert]
+        
+    # Keywords
+    set kw [list "proc " "lset " "set " "puts " "close " "global " "wm " "place " "pack " "toplevel " "expr " \
+			"string " "cat " "open " "read " "if " 	"for " "foreach " "while " " add" " configure" \
+			"else" "return" "require " "package " "source " "list " " colorize" "after " "cascade " "command " \
+			"focus " "split " "lindex " "image " "create "]
+	foreach j $kw {
+		 set idxList [$w search -all $j $fromIdx $toIdx]
+    foreach idx $idxList { $w tag add ckeyword $idx "$idx + [string length $j]chars" }
+}
+    
+    # Operators and symbols
+    set opsymbol [list "{" "}" "+" "/" "\x5B" "\x5D" "." "," "=" "&" ";" "|"]
+    foreach e $opsymbol { 
+		set idxList [$w search -all $e $fromIdx $toIdx]
+		foreach idx $idxList { $w tag add coperator $idx "$idx + [string length $e]chars" }
+	}
+    
+    # widgets
+    set wname  [list "labelframe " "label " "button " "entry " "listbox " "frame " "radiobutton " "text " "scrollbar "\
+    "ttk::combobox "  "menu " "tk_chooseColor " "tk_optionMenu " "ttk::frame " "checkbutton " "scale " "tk_messageBox "]
+    foreach d $wname { 
+		set idxList [$w search -all $d $fromIdx $toIdx]
+		foreach idx $idxList { $w tag add cwidget $idx "$idx + [string length $d]chars" }
+	}
+    
+    # constants
+    set constant [list "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" " yes" " no" \
+    " true" " false" " x" " y" " both" " left" " right" " top" " bottom" " word" "photo "]
+    foreach f $constant {
+		    set idxList [$w search -all $f $fromIdx $toIdx]
+    foreach idx $idxList { $w tag add cconstant $idx "$idx + [string length $f]chars" }
+	}
+	
+	# colors
+	set wcolor [list " black" " white" " blue" " yellow" " red"]
+
+	
+	# colors hexadecimal
+	set chex [list "#0" "#1" "#2" "#3" "#4" "#5" "#6" "#7" "#8" "#9" "#A" "#B" "#C" "#D" "#E" "#F" ]
+		   foreach i $chex {
+		    set idxList [$w search -all $i $fromIdx $toIdx]
+    foreach idx $idxList { $w tag add cconstant $idx "$idx + 7chars" }
+	}
+
+    # Arguments
+    set myargs [list " -text" " -x" " -y" " -width" " -height" " -textvariable" " -image" " -command" " -title " \
+					" geometry " " -side" " -fill" " -fg" " -bg" " -bd" " -expand" " -padx" " -pady" \
+					" -menu" " -underline" " -setgrid" " -wrap" " -id" " -tags"  " attributes" " iconphoto" \
+					" -shrink" " -subsample" " -relief" " -parent" " -background" " -foreground" \
+					" -type" " -icon" " -message" " -row" " -column" " -sticky" " title" " -compound"\
+		" -relief" " -file" " -accelerator" ]
+
+
+	foreach g $myargs {
+		set idxList [$w search -all $g $fromIdx $toIdx]
+		foreach idx $idxList { $w tag add cargument $idx "$idx + [string length $g]chars" }
+	}
+
+	# events
+	set wevent [list "bind " "<1>" " <Double-1>" " <KeyPress>" " <KeyRelease>" " <Return>" "<<ListboxSelect>>" "destroy "]
+	foreach h $wevent {
+		set idxList [$w search -all $h $fromIdx $toIdx]
+    foreach idx $idxList { $w tag add cconstant $idx "$idx + [string length $h]chars" }
+	}
+
+
+  # Comments
+    set idxList [$w search -all "# " $fromIdx $toIdx]
+    foreach idx $idxList {
+        $w tag add ccomment $idx "$idx lineend"  
+    }
+    
+    
+   # Update combobox procedures
+   global allproc
+    set idproc [.ihm.editor search -all "proc " 1.0 end]
+    puts $idproc
+set myList {}
+foreach idp $idproc {
+    set idproc2 [.ihm.editor search "\x7B" "$idp + 5chars" "$idp lineend"]
+    if {$idproc2 ne ""} { set str [.ihm.editor get "$idp + 5chars" $idproc2] ; lappend myList [string trimright $str] ;
+		set allproc $myList
+    .ihm.t.cb1 configure -values $allproc }
+} 
+} 
+
+
+# 
+# ################################## INSERT FONT #########################
+# 
+
+proc selectfont {} {
+
+}
+
+# 
+# ################################## INSERT WIDGET CODE #########################
+# 
+
+proc insertwidget {} {
+	global codewidget
+	set idx [.ihm.editor index insert]
+	.ihm.editor insert $idx $codewidget
+}
+
+# -------------------------- TK FILE MANAGEMENT ----------------
+# Create new tk file
+proc Editor_New_File {} {
+toplevel .tnew
+wm title .tnew "create new tk source code file"
+pack [ labelframe .tnew.lbf1 -text "Tk source code file name without extention" -padx 5 -pady 5] -fill x
+pack [ entry .tnew.lbf1.name ] -fill x
+pack [ button .tnew.bok -text "Create file" -command { destroy .tnew}]  -side right
+}
+
+# Open tk file in editor
+proc Editor_Open_File {} {
+}
+
+# Save modification inside current tk file
+proc Editor_Save_File {} {
+global mypath; global currentfile; puts $currentfile
+set mytext [.ihm.editor get 0.0 end]; set sep "/" 
+set myfile [open $mypath$sep$currentfile "w"] ; puts $myfile $mytext; close $myfile
+tk_messageBox -type ok -icon info -title "File saved" -message "File $currentfile saved !"
+}
+
+# Save code in another tk file
+proc Editor_Save_As {} {
+
+}
+
+# --------------------- CLIPBOARD MANAGEMENT ---------------------
+# Clipboard Cut
+proc Editor_Cut_Code { } {
+set owner [selection own]
+clipboard clear
+catch { set text [selection get]; clipboard append $text; $owner delete sel.first sel.last }
+}
+
+# Clipboard COPY
+proc Editor_Copy_Code { } {
+set owner [selection own]
+clipboard clear
+catch { clipboard append [selection get] }
+}
+
+# Clipboard PASTE
+proc Editor_Paste_Code { } {
+catch { set clip [selection get -selection CLIPBOARD]}
+set idx [.ihm.editor index insert]
+.ihm.editor insert $idx $clip
+}
+
+# -------------------- SEARCH CODE -----------------------------
+
+proc Editor_Search_Form { } {
+	toplevel .search  -class Dialog
+	wm transient .search .
+	wm protocol .search WM_DELETE_WINDOW "destroy .search"
+	label .search.label -text "Search:"
+	label .search.label2 -text "Replace:"
+	entry .search.entry -width 30
+	button .search.find -text "Search" -command { search }
+	button .search.replace -text "Replace" -command { replace }
+	entry .search.repl -width 30
+	button .search.dismiss -text "Cancel" -command  {destroy .search}
+	grid .search.label .search.entry .search.find -sticky ew
+	grid .search.label2 .search.repl .search.replace -sticky ew
+	grid .search.dismiss -column 1 -columnspan 2 -sticky ew	
+	bind .search.entry <Key-Return> {search}
+	focus .search.entry	
+}
+
+proc search { } {
+	global get_index
+	global sel.first
+	global sel.last
+	global search_string
+	focus .ihm.editor
+	
+	set search_string [.search.entry get]
+	set length [string length $search_string]
+
+	set index [.ihm.editor search -- $search_string $get_index end]
+		if {$index == "" } {
+			set get_index 1.0
+			set index [.ihm.editor search -- $search_string $get_index end]
+		}
+
+		if {$index != ""} {
+			catch { 
+					.ihm.editor tag remove sel sel.first sel.last
+				}
+			.ihm.editor tag add sel $index "$index + $length chars"
+			.ihm.editor mark set insert $index
+			.ihm.editor see $index
+			set get_index "$index + 1 char"
+		} else {
+			tk_messageBox -type ok -icon info -title "Text not found" -message "Code is not founded!"
+			set get_index 1.0 
+			}
+}
+
+
+# 
+# ################################# FORM SELECT COLORS #################################
+# 
+proc Editor_Choose_Color {} {
+global hexcode
+set lcolor [list gray60 gray70 gray80 gray85 gray90 gray95 snow1 snow2 snow3 snow4 seashell1 seashell2 \
+    seashell3 seashell4 AntiqueWhite1 AntiqueWhite2 AntiqueWhite3 DarkSlateGray1 DarkSlateGray2 DarkSlateGray3 \
+    aquamarine4 DarkSeaGreen1 DarkSeaGreen2 DarkSeaGreen3 PaleGreen1 PaleGreen2 PaleGreen3 PaleGreen4 SpringGreen1 \
+    green3 green4 chartreuse1 chartreuse2 chartreuse3 chartreuse4 OliveDrab1 OliveDrab2 OliveDrab3 OliveDrab4 \
+    coral2 coral3 coral4 tomato1 tomato2 tomato3 tomato4 red4 DeepPink1 DeepPink2 DeepPink3 DeepPink4 HotPink1 \
+    HotPink2 HotPink3 HotPink4 pink1 pink2 pink3 pink4 PaleVioletRed2 PaleVioletRed3 PaleVioletRed4 maroon1 \
+    VioletRed4 magenta1 magenta2 magenta3 magenta4 orchid1 orchid2 orchid3 orchid4 plum1 plum2 plum3 plum4 \
+    DarkOrchid1 DarkOrchid2 DarkOrchid3 DarkOrchid4 purple1 MediumPurple3 MediumPurple4 thistle1 thistle2 thistle3 \
+    black white red yellow green blue brown grey orange pink white]
+toplevel .co
+wm title .co "Select color"
+wm geometry .co 400x400+100+100
+pack [frame .co.title ] -fill x
+pack [button .co.title.bchoose -text "Choose custom color" -command { set hexcode [tk_chooseColor -title "Choose a background color" -parent .]}] -side left
+pack [button .co.title.bok -text "OK" -command {Editor_Insert_Color;  destroy .co}] -side right
+pack [labelframe .co.bc -text "Basic colors" ] -fill both -expand 1
+pack [frame .co.bc.f] -padx 10 -pady 10 -fill both -expand 1
+pack [labelframe .co.cd -text "Code of color" ] -fill both -expand 1
+pack [entry .co.cd.e1 -textvariable hexcode ] -fill both -expand 1
+# show colors in buttons
+set n 0
+for {set l 0} {$l < 8} {incr l} {
+    for {set c 0} {$c < 12} {incr c} {
+       set color [lindex $lcolor $n]
+       grid [button .co.bc.f.$c{}$l -bg $color -activebackground $color -command [list showcolor .co.cd.e1 $color] ] \
+       -row $l -column $c -sticky news
+       grid columnconfigure .co.bc.f $c -weight 1
+       grid rowconfigure    .co.bc.f $l -weight 1
+		incr n
+       }
+    }
+}
+
+proc showcolor {w mycolor} {
+	global hexcode
+	set hexcode $mycolor
+}
+
+proc Editor_Insert_Color {} {
+	global hexcode
+	set idx [.ihm.editor index insert]
+	.ihm.editor insert $idx $hexcode
+}
+
+
+
+
+
+
+
+
+
+
+
+

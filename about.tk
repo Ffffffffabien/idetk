@@ -1,0 +1,15 @@
+proc Form_About {} {
+toplevel .fabout
+wm title .fabout "About IdeTK"
+wm geometry .fabout 500x400+200+200
+wm resizable .fabout 0 0
+wm iconphoto .fabout ihelp
+pack [label .fabout.t -text "\n About IdeTK \n" -font "serif 24" -image icapp -compound left -bg #3F7744 -fg white ] -fill x
+pack [label .fabout.d -text "IdeTK is a visual code editor to
+	 develop rapid applications and scripts in tcl TK.
+	 Free redistribuable, projet started in september 2024.
+	 Enjoy!
+	 " -bg white] -fill both -expand 1
+pack [label .fabout.f -text " contact : fabien.toniutti@free.fr \n web : www.tcltk.fr" -font "serif 10" -bg #3F7744 -fg white ] -fill x
+}
+

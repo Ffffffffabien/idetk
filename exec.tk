@@ -1,0 +1,58 @@
+# external application  to work with idetk
+
+# open web browser to read help
+proc loadhelp {} {
+	global script_path
+	set h "/doc/index.html"
+	set ofdoc $script_path$h
+	exec firefox $ofdoc &
+ }
+
+
+# open file explorer to see inside project folder
+proc explore {} {
+	set e [Conf_Read "Explorer"]
+exec $e &
+ }
+
+#  Execute project script
+proc executescript {} {
+	global starfile
+	if { $starfile == "" }  { 
+	tk_messageBox -type ok -icon info -title "No projet" -message "No project to execute"} else { exec wish $starfile & }
+}
+ 
+
+# open web browser to read help
+proc loadidehelp {} {
+	global script_path
+	set h "/help/index.html"
+	set idedoc $script_path$h
+	exec firefox $idedoc &
+
+ }
+ 
+# Create tar archive of project with new version number
+proc Compress_Project {v} {
+	global nomduprojet
+	global script_path
+	set dir [tk_chooseDirectory -initialdir ~ -title "Select folder destination for [concat $nomduprojet "-" $v ".zip"]"]
+		if {$dir eq ""} {
+				tk_messageBox -type ok -icon info -title "Warning" -message "No directory selected try again."
+		} else {
+	set sep "/"; set t "-"; set ext ".zip"
+	exec zip -r $dir$sep$nomduprojet$t$v$ext [concat $script_path "/"]
+	tk_messageBox -type ok -icon info -title "Information" -message "Source project created\n with success !"
+}
+	
+}
+
+
+
+
+
+
+
+
+
+

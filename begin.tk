@@ -1,0 +1,37 @@
+# Open first time windows
+
+proc Idetk_Begin {} {
+global script_path
+set bgr #232323
+set f "/img/logo.png"
+image create photo ilogo -file $script_path$f
+
+# create frame to center begin window in screen
+pack [frame .l -bg $bgr] -fill both -expand 1 -side left
+pack [frame .b -bg $bgr] -fill both -expand 1 -side left
+pack [frame .r -bg $bgr] -fill both -expand 1 -side left
+pack [label .b.sep1 -bg $bgr] -fill x
+
+# Create begin Form
+pack [frame .b.b -bg #FFFFFF] -fill both -expand 1
+pack [label .b.b.logo -bg #2C6131 -image ilogo] -fill x
+pack [frame .b.b.f -bg #5A803B] -fill both -expand 1
+pack [frame .b.b.f.left ] -fill both -expand 1 -side left
+pack [button .b.b.f.left.b0 -text "New project" -image [resizeIMG inew 32 32] -compound left -command Form_Wizzard] -fill both -expand 1
+pack [button .b.b.f.left.b1 -text "Open project" -image [resizeIMG iopen 32 32] -compound left -command Project_Form_Open] -fill both -expand 1
+pack [button .b.b.f.left.b2 -text "Recent project" -image [resizeIMG ireload 32 32] -compound left] -fill both -expand 1
+pack [button .b.b.f.left.b3 -text "Examples" -image [resizeIMG wwidget 32 32] -compound left] -fill both -expand 1
+pack [button .b.b.f.left.b4 -text "About IdeTk..." -image [resizeIMG ihelp 32 32] -compound left -command Form_About] -fill both -expand 1
+pack [button .b.b.f.left.b5 -text "Quit" -image [resizeIMG iquit 32 32] -compound left -command exit] -fill both -expand 1
+pack [listbox .b.b.f.right -bg #FFFDCE] -side right -fill both -expand 1
+pack [label .b.sep2 -bg $bgr] -fill x
+}
+
+# ----- Init main form after begin form choice
+proc Begin_Init_Form {} {
+# Remove begin form if exist
+if {[winfo exist .l] == 1} {destroy .l}
+if {[winfo exist .b] == 1} {destroy .b}
+if {[winfo exist .r] == 1} {destroy .r}
+if {[winfo exist .t] == 0} {Ide_Toolbar}
+} 

@@ -1,0 +1,32 @@
+
+# Load theme from configuration file
+proc Theme_Load {} {
+global ecolor script_path
+lset ecolor 0 [Conf_Read "Theme"]
+set t0 "/theme/"; set t1 [lindex $ecolor 0]; set t2 ".theme"
+set filetheme $script_path$t0$t1$t2; set m [file exist $filetheme]
+if {$m != 0} { set fp [open $filetheme r]; set fd [read $fp];	close $fp; set mydata [split $fd ";"];
+set c 0; foreach p $mydata { lset ecolor $c [lindex $mydata $c] ; incr c; puts $mydata }
+	}
+}
+
+# Save theme as in IDEtk preference form
+proc Theme_Save_As {name} {
+global ecolor script_path
+set answer [tk_messageBox -type yesno -icon question -title Question -message "Create this new theme?"]
+if {$answer == yes} { 
+	set t0 "/theme/" ; set t1 ".theme"
+	set f [join $ecolor ";"] ; set myfile [open $script_path$t0$name$t1 "w"] ; puts $myfile $f; close $myfile
+	set a [tk_messageBox -type ok -icon info -title Information -message "Theme created with success !"]
+	}
+}
+
+# Refresh View in Idepref after select new theme
+proc Theme_Refresh_View {} {
+global desctheme ecolor; set desctheme [lindex $ecolor 0]
+set l [list 3 4 5 6 7 8 9]
+.pref.nb.tab1.l1.right.b1 configure -background [lindex $ecolor 1] -fg [lindex $ecolor 2]
+.pref.nb.tab1.l1.right.b2 configure -background [lindex $ecolor 2] -fg [lindex $ecolor 1]
+foreach b $l {.pref.nb.tab1.l1.right.b$b configure -background [lindex $ecolor $b]}
+}
+

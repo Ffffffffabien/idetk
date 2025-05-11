@@ -1,0 +1,163 @@
+#fenetre de designer IHM
+# creation de la toolbar dans le designer
+package require Img
+source icon.tk
+source gridview.tk
+
+set otoplevel [list "class" "name" "bd" "borderwidth" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "title" "visual" "x" "y" "width"]
+	set olabel [list "class" "name" "activebackground" "activeforeground" "anchor" "background" "bd" "bg" "bitmap" "borderwidth" "command" "compound" "cursor" "default" "disabledforeground" "fg" "font" "foreground" "height" "highlightbackground" "highlightcolor" "highlightthickness" "image" "justify" "length" "overrelief" "padx" "pady" "relief" "repeatdelay" "repeatinterval" "state" "takefocus" "text" "textvariable" "underline" "width" "wrap"]
+	set ocanvas [list "class" "name" "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set ocheck [list "class" "name" "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set oentry [list "class" "name" "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set oframe [list "class" "name" "bd" "borderwidth" "class" "menu" "relief" "screen" "use" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set olbframe [list "class" "name" "bd" "borderwidth" "class" "fg" "font" "foreground" "labelanchor" "labelwidget" "relief" "text" "background" "bg" "colormap" "container" "cursor" "height" "highlightbackground" "highlightcolor" "highlightthickness" "padx" "pady" "takefocus" "visual" "width"]
+	set opw [list "class" "name" "background" "bd" "bg" "borderwidth" "cursor" "handlepad" "handlesize" "height" "opaqueresize" "orient" "proxybackground" "proxyborderwidth" "proxyrelief" "relief" "sashcursor" "sashpad" "sashrelief" "sashwidth" "showhandle" "width"]
+	set oscale [list "class" "name" "activebackground" "background" "bigincrement" "bd" "bg" "borderwidth" "command" "cursor" "digits" "fg" "font" "foreground" "from" "highlightbackground" "highlightcolor" "highlightthickness" "label" "length" "orient" "relief" "repeatdelay" "repeatinterval" "resolution" "showvalue" "sliderlength" "sliderrelief" "state" "takefocus" "tickinterval" "to" "troughcolor" "variable" "width"]
+	set oscrb [list "class" "name" "activebackground" "activerelief" "background" "bd" "bg" "borderwidth" "command" "cursor" "elementborderwidth" "highlightbackground" "highlightcolor" "highlightthickness" "jump" "orient" "relief" "repeatdelay" "repeatinterval" "takefocus" "troughcolor" "width"]
+	
+# Width of form
+set formwidth 400
+
+# widget counter
+set wcounter 1
+
+wm geometry . 1000x700+10+10
+wm title . "Designer"
+
+# create toolbar
+pack [frame .tb1] -fill x
+pack [button .tb1.bcode -text "Go to code"] -side left
+pack [button .tb1.bsave -text "Save form"] -side left
+pack [button .tb1.bundo -text "Undo"] -side left
+pack [button .tb1.bredo -text "Redo"] -side left
+pack [button .tb1.bmenu -text "Menu Editor"] -side left
+pack [button .tb1.bgrid -text "Show grid" ] -side left
+
+# Create widget bar
+pack [frame .tbw] -fill x
+pack [button .tbw.b0 -image wnowidget ] -side left
+pack [button .tbw.b1 -image wbutton -command button:create] -side left
+pack [button .tbw.b2 -image wlabel ] -side left
+pack [button .tbw.b3 -image wradio ] -side left
+pack [button .tbw.b4 -image wcheck ] -side left
+pack [button .tbw.b5 -image wentry ] -side left
+pack [button .tbw.b6 -image wnb ] -side left
+pack [button .tbw.b7 -image wlb ] -side left
+pack [button .tbw.b8 -image wcombo ] -side left
+pack [button .tbw.b9 -image wnowidget ] -side left
+pack [label .tbw.lmsg -text "label"  -bg #FFF8C7] -side right -fill y
+
+# create body frame
+pack [frame .f1] -fill both -expand 1
+# Create hierarchy
+pack [labelframe .f1.l -text "Hierarchy" -padx 5 -pady 5] -side left -fill y
+pack [frame .f1.l.f] -fill x
+pack [button .f1.l.f.b0 -text ">" ] -side left
+pack [button .f1.l.f.b1 -text "<" ] -side left
+pack [button .f1.l.f.b3 -text "Del" ] -side right
+pack [button .f1.l.f.b2 -text "Edit" ] -side right
+
+pack [listbox .f1.l.lb1 ] -fill both -expand 1
+
+#create designer IDE
+pack [label .f1.sep1 -bg #808080] -fill y -side left
+pack [canvas .f1.form -bg #808080] -fill both -expand 1 -side left
+pack [label .f1.sep2 -bg #808080] -fill y -side left
+
+# Create properties
+pack [labelframe .f1.r -text "Properties" -padx 5 -pady 5] -side left -fill y
+pack [listbox .f1.r.lb1 ] -fill both -expand 1
+
+# Create widgets family
+bind .f1.r.lb1 <Double-1> {getentry}
+
+proc design {} {
+	toplevel .d
+	wm geometry .d 400x400+500+500
+	wm title .d "Designer"
+
+frame .d.toolbar -bd 1 -relief raised
+button .d.toolbar.bopen -image iopen -relief flat 
+pack .d.toolbar.bopen -side left -padx 2 -pady 2
+pack .d.toolbar -fill x
+
+# creation de la toolbar des widgets
+	frame .d.widget -bd 1 -relief raised
+	button .d.widget.bnowidget -image wnowidget 
+	button .d.widget.bform -image wform 
+	button .d.widget.bbutton -image wbutton 
+	button .d.widget.blabel -image wlabel
+	button .d.widget.bradio -image wradio  
+	button .d.widget.bcheck -image wcheck 
+	button .d.widget.bentry -image wentry 
+	button .d.widget.bnb -image wnb 
+	button .d.widget.blb -image wlb 
+	button .d.widget.bcombo -image wcombo 
+
+	pack .d.widget.bnowidget .d.widget.bform .d.widget.bbutton .d.widget.blabel .d.widget.bradio .d.widget.bcheck .d.widget.bentry .d.widget.bnb .d.widget.blb .d.widget.bcombo -side left -padx 2 -pady 2
+	pack .d.widget -fill x
+}
+
+ # Create Form
+proc form:create {} {
+	global wcounter
+	global formwidth
+	global otoplevel
+	# insert  properties
+	.f1.r.lb1  delete 0 end
+	foreach p $otoplevel {.f1.r.lb1  insert end $p}
+	# create form
+.f1.form create rect 0 0 $formwidth 20 -outline #001863 -fill #001863
+.f1.form create text [expr $formwidth -25] 11 -anchor e -text "^" -fill white -font bold
+.f1.form create text [expr $formwidth -6] 11 -anchor e -text "X" -fill white -font bold
+.f1.form create rect 0 21 $formwidth 400 -outline #DFDFDF -fill #DFDFDF
+.f1.l.lb1 insert end "form$wcounter"
+modify:property [.f1.r.lb1 get 0 end] "class" "Form"
+modify:property [.f1.r.lb1 get 0 end] "name" "form$wcounter"
+modify:property [.f1.r.lb1 get 0 end] "width" 400
+modify:property [.f1.r.lb1 get 0 end] "height" 400
+modify:property [.f1.r.lb1 get 0 end] "x" 10
+modify:property [.f1.r.lb1 get 0 end] "y" 10
+}
+
+# Create button
+proc button:create {} {
+		global wcounter
+		global olabel
+		# load properties
+		load:property $olabel
+		set wcounter [expr $wcounter + 1 ]
+		set b$wcounter [ .f1.form create rect 10 30 100 50 -outline black -fill #AFAFAF]
+		.f1.l.lb1 insert end "button$wcounter"
+modify:property [.f1.r.lb1 get 0 end] "class" "button"
+modify:property [.f1.r.lb1 get 0 end] "name" "button$wcounter"
+modify:property [.f1.r.lb1 get 0 end] "width" 100
+modify:property [.f1.r.lb1 get 0 end] "height" 50
+modify:property [.f1.r.lb1 get 0 end] "x" 10
+modify:property [.f1.r.lb1 get 0 end] "y" 30
+}
+
+proc  getentry {} {
+	destroy .f2.prop.tab1.ent1
+	pack [ entry .f1.r.ent1 -textvariable myval]
+	focus .f1.r.ent1 
+	bind .f1.r.ent1  <Return> {  destroy .f1.r.ent1 }
+}
+
+proc load:property { listofoption } {
+	.f1.r.lb1 delete 0 end
+		foreach p $listofoption {.f1.r.lb1 insert end $p}
+}
+
+
+proc modify:property { mylist myoption myvalue } {
+	set where [lsearch $mylist $myoption]
+	set newlist [lreplace $mylist $where $where [concat $myoption "=" $myvalue]]
+	.f1.r.lb1 delete 0 end
+	set listsorted [lsort -increasing $newlist]
+	foreach p $listsorted {.f1.r.lb1 insert end $p}
+}
+
+
+
+
